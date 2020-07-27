@@ -1,0 +1,30 @@
+image: golang:1.14
+
+stages:
+- test
+
+cache:
+  key: yup
+  paths:
+  - /go/pkg
+
+workflow:
+  rules:
+  - if: $CI_MERGE_REQUEST_ID
+  - if: $CI_COMMIT_BRANCH == "master"
+
+lint:
+  stage: test
+  image: golangci/golangci-lint:v1.27.0
+  before_script:
+  - go mod download
+  script:
+  - golangci-lint run -v
+
+test:
+  stage: test
+  before_script:
+  - go mod download
+  script:
+  - go test -race -coverpkg ./... -coverprofile=coverage.txt -covermode=atomic ./...
+
