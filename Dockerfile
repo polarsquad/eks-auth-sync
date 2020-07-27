@@ -1,7 +1,9 @@
 FROM golang:1.14 AS build
 WORKDIR /build
-COPY go.mod main.go ./
-RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o eks-auth-sync
+COPY go.mod ./
+COPY cmd/ cmd/
+RUN go mod download
+RUN CGO_ENABLED=0 go build -ldflags="-s -w" -o eks-auth-sync ./cmd/eksauthsync 
 
 FROM alpine:latest
 RUN apk --no-cache add ca-certificates
