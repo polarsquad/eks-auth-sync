@@ -1,0 +1,11 @@
+users:
+- userarn: arn:aws:iam::098765432198:user/john@example.org
+  username: john
+  groups:
+  - admin
+roles:
+- rolearn: arn:aws:iam::098765432198:role/eks-node
+  username: system:node:{{EC2PrivateDNSName}}
+  groups:
+  - system:bootstrappers
+  - system:nodes
