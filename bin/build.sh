@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
-cd "${0%/*}/.."
+#!/bin/sh
+set -eu
 
 export CGO_ENABLED=0
 ROOT_PKG="gitlab.com/polarsquad/eks-auth-sync"
@@ -13,10 +12,7 @@ if [ -z "${GIT_HASH:-}" ]; then
     GIT_HASH=$(bin/git-hash.sh)
 fi
 
-LDFLAGS="-s -w"
-LDFLAGS+=" -X '$BUILDINFO_PKG.Version=$APP_VERSION'"
-LDFLAGS+=" -X '$BUILDINFO_PKG.GitHash=$GIT_HASH'"
-
+LDFLAGS="-s -w -X '$BUILDINFO_PKG.Version=$APP_VERSION' -X '$BUILDINFO_PKG.GitHash=$GIT_HASH'"
 go build \
     -ldflags="$LDFLAGS" \
     -o eks-auth-sync \

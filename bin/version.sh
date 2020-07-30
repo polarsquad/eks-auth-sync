@@ -1,6 +1,5 @@
-#!/usr/bin/env bash
-set -euo pipefail
-cd "${0%/*}/.."
+#!/bin/sh
+set -eu
 
 VERSION_MATCH_REGEX='^v[0-9]+\.[0-9]+\.[0-9]+$'
 VERSION_FILTER_REGEX='s/^v//'

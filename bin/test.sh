@@ -1,5 +1,9 @@
-#!/usr/bin/env bash
-set -euo pipefail
-cd "${0%/*}/.."
+#!/bin/sh
+set -eu
 
-go test -race -coverpkg ./internal/... -coverprofile=coverage.txt -covermode=atomic ./...
+go test \
+    -race \
+    -coverpkg ./internal/... \
+    -coverprofile=coverage.txt \
+    -covermode=atomic \
+    ./...
