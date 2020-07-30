@@ -1,7 +1,18 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"os"
+
+	"gitlab.com/polarsquad/eks-auth-sync/internal/core"
+)
 
 func main() {
-	fmt.Println("hello world")
+	if err := mainWithErr(); err != nil {
+		log.Panic(err)
+	}
+}
+
+func mainWithErr() error {
+	return core.NewCore().Run(os.Args[1:])
 }
