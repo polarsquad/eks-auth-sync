@@ -35,9 +35,9 @@ func scanIAMUsers(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*m
 			if err != nil {
 				return
 			}
-			mapping := createUserMappingFromTags(accountID, *user.UserName, tags, tagPrefix)
-			if mapping != nil {
-				ms = append(ms, mapping)
+			m := createUserMappingFromTags(accountID, *user.UserName, tags, tagPrefix)
+			if m != nil {
+				ms = append(ms, m)
 			}
 		}
 
