@@ -4,29 +4,36 @@ stages:
 - dependencies
 - test
 
-cache:
-  key: "$CI_COMMIT_REF_SLUG"
-  paths:
-  - /go/pkg
-
 workflow:
   rules:
   - if: $CI_MERGE_REQUEST_ID
   - if: $CI_COMMIT_BRANCH == "master"
 
+.go-cache:
+  variables:
+    GOPATH: $CI_PROJECT_DIR/.go
+  before_script:
+  - mkdir -p .go
+  cache:
+    paths:
+    - .go/pkg/mod/
+
 gomod:
   stage: dependencies
+  extends: .go-cache
   script:
   - go mod download
 
 lint:
   stage: test
+  extends: .go-cache
   image: golangci/golangci-lint:v1.27.0
   script:
   - golangci-lint run -v
 
 test:
   stage: test
+  extends: .go-cache
   script:
   - ./bin/test.sh
 
