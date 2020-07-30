@@ -15,17 +15,17 @@ const (
 
 var testMappings = All{
 	Users: []*User{
-		&User{
+		{
 			UserARN:  userARN(testAccountID1, "john@example.org"),
 			Username: "john",
 			Groups:   []string{"admin"},
 		},
-		&User{
+		{
 			UserARN:  userARN(testAccountID2, "jill@example.org"),
 			Username: "jill",
 			Groups:   []string{"team-x"},
 		},
-		&User{
+		{
 			UserARN:  userARN(testAccountID2, "jack@example.org"),
 			Username: "jack",
 			Groups:   []string{"team-x"},
@@ -33,7 +33,7 @@ var testMappings = All{
 	},
 	Roles: []*Role{
 		Node(roleARN(testAccountID1, "eks-node")),
-		&Role{
+		{
 			RoleARN:  roleARN(testAccountID2, "deployer"),
 			Username: "deployer",
 			Groups:   []string{"team-x", "deployer"},
@@ -97,21 +97,31 @@ func TestReadingFromYAML(t *testing.T) {
 	assert.Equal(t, testMappings, ms)
 }
 
-func TestMerge(t *testing.T) {
+func TestAppend(t *testing.T) {
+	var all All
 	ms1 := &All{
 		Users: testMappings.Users[:2],
 	}
-	ms2 := &All {
+	ms2 := &All{
 		Roles: testMappings.Roles[:1],
 	}
-	ms3 := &All {
+	ms3 := &All{
 		Users: testMappings.Users[2:],
 		Roles: testMappings.Roles[1:],
 	}
 
-	msr := Merge([]*All{ms1, ms2, ms3})
+	all.Append(ms1)
+	all.Append(ms2)
+	all.Append(ms3)
 
-	assert.EqualValues(t, &testMappings, msr)
+	assert.EqualValues(t, &testMappings, &all)
+}
+
+func TestIsEmpty(t *testing.T) {
+	assert.True(t, (&All{}).IsEmpty())
+	assert.False(t, (&All{Users: testMappings.Users}).IsEmpty())
+	assert.False(t, (&All{Roles: testMappings.Roles}).IsEmpty())
+	assert.False(t, testMappings.IsEmpty())
 }
 
 func userARN(accountID, username string) string {

@@ -41,6 +41,10 @@ type All struct {
 	Roles []*Role `yaml:"roles"`
 }
 
+func (m *All) IsEmpty() bool {
+	return len(m.Users) == 0 && len(m.Roles) == 0
+}
+
 func (m *All) ToConfigMap() (*k8sv1.ConfigMap, error) {
 	usersStr, err := toYAMLString(m.Users)
 	if err != nil {
@@ -65,13 +69,9 @@ func (m *All) FromYAML(bs []byte) error {
 	return yaml.Unmarshal(bs, m)
 }
 
-func Merge(mappings []*All) (all *All) {
-	all = &All{}
-	for _, ms := range mappings {
-		all.Users = append(all.Users, ms.Users...)
-		all.Roles = append(all.Roles, ms.Roles...)
-	}
-	return
+func (m *All) Append(mappings *All) {
+	m.Users = append(m.Users, mappings.Users...)
+	m.Roles = append(m.Roles, mappings.Roles...)
 }
 
 func toYAMLString(o interface{}) (string, error) {
