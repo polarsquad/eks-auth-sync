@@ -1,10 +1,11 @@
 image: golang:1.14
 
 stages:
+- dependencies
 - test
 
 cache:
-  key: yup
+  key: "$CI_COMMIT_REF_SLUG"
   paths:
   - /go/pkg
 
@@ -13,18 +14,26 @@ workflow:
   - if: $CI_MERGE_REQUEST_ID
   - if: $CI_COMMIT_BRANCH == "master"
 
+gomod:
+  stage: dependencies
+  script:
+  - go mod download
+
 lint:
   stage: test
   image: golangci/golangci-lint:v1.27.0
-  before_script:
-  - go mod download
   script:
   - golangci-lint run -v
 
 test:
   stage: test
-  before_script:
-  - go mod download
   script:
-  - go test -race -coverpkg ./... -coverprofile=coverage.txt -covermode=atomic ./...
+  - ./bin/test.sh
 
+docker-image-build:
+  stage: test
+  image: docker:latest
+  services:
+  - docker:dind
+  script:
+  - ./bin/docker-build.sh "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
