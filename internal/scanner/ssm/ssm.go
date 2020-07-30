@@ -1,33 +1,31 @@
 package ssm
 
 import (
+	"fmt"
+
+	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
 	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/ssm"
-	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
 )
 
 type ScanConfig struct {
-	SSMPath string
+	Path string `yaml:"path"`
 }
 
-type AWSConfig struct {
-	SSMAPI ssmiface.SSMAPI
-}
-
-func AWSConfigFromSession(s *session.Session, c *aws.Config) *AWSConfig {
-	return &AWSConfig{
-		SSMAPI: ssm.New(s, c),
+func (s *ScanConfig) Validate() error {
+	if s.Path == "" {
+		return fmt.Errorf("no path specified")
 	}
+	return nil
 }
 
-func Scan(c *ScanConfig, awsConfig *AWSConfig) (ms *mapping.All, err error) {
+func Scan(c *ScanConfig, awsAPIs *intaws.API) (ms *mapping.All, err error) {
 	ms = &mapping.All{}
 	var output *ssm.GetParameterOutput
-	output, err = awsConfig.SSMAPI.GetParameter(&ssm.GetParameterInput{
-		Name: aws.String(c.SSMPath),
+	output, err = awsAPIs.SSM.GetParameter(&ssm.GetParameterInput{
+		Name:           aws.String(c.Path),
 		WithDecryption: aws.Bool(true),
 	})
 	if err != nil {

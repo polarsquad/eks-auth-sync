@@ -2,6 +2,7 @@ package iam
 
 import (
 	"fmt"
+	"log"
 	"strings"
 
 	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
@@ -35,9 +36,9 @@ func scanIAMRoles(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*m
 			if err != nil {
 				return
 			}
-			mapping := createRoleMappingFromTags(accountID, *role.RoleName, tags, tagPrefix)
-			if mapping != nil {
-				ms = append(ms, mapping)
+			m := createRoleMappingFromTags(accountID, *role.RoleName, tags, tagPrefix)
+			if m != nil {
+				ms = append(ms, m)
 			}
 		}
 
@@ -89,7 +90,7 @@ func createRoleMappingFromTags(accountID string, rolename string, tags map[strin
 		return mapping.Node(roleARN)
 	}
 	if roleType != "" && roleType != "user" {
-		// TODO: log
+		log.Printf("unknown role type [%s] found for role %s", roleType, roleARN)
 		return nil
 	}
 
@@ -98,8 +99,8 @@ func createRoleMappingFromTags(accountID string, rolename string, tags map[strin
 		return nil
 	}
 	return &mapping.Role{
-		RoleARN: roleARN,
+		RoleARN:  roleARN,
 		Username: k8sUsername,
-		Groups: getK8sGroups(tags, tagPrefix),
+		Groups:   getK8sGroups(tags, tagPrefix),
 	}
 }

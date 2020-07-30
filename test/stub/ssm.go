@@ -1,28 +1,35 @@
-package ssm
+package stub
 
 import (
+	"gitlab.com/polarsquad/eks-auth-sync/test/testdata"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/awserr"
 	"github.com/aws/aws-sdk-go/service/ssm"
 	"github.com/aws/aws-sdk-go/service/ssm/ssmiface"
 )
 
-type ssmStub struct {
+type SSM struct {
 	ssmiface.SSMAPI
-	contents map[string]string
+	Contents map[string]string
 }
 
-func (s *ssmStub) GetParameter(input *ssm.GetParameterInput) (output *ssm.GetParameterOutput, err error) {
+func NewSSM() *SSM {
+	return &SSM{
+		Contents: testdata.SSMContents,
+	}
+}
+
+func (s *SSM) GetParameter(input *ssm.GetParameterInput) (output *ssm.GetParameterOutput, err error) {
 	output = &ssm.GetParameterOutput{}
-	value, ok := s.contents[*input.Name]
+	value, ok := s.Contents[*input.Name]
 	if !ok {
 		err = awserr.New(ssm.ErrCodeParameterNotFound, "", nil)
 		return
 	}
 	output.Parameter = &ssm.Parameter{
-		Name: input.Name,
+		Name:  input.Name,
 		Value: aws.String(value),
 	}
 	return
 }
-

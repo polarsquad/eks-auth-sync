@@ -3,62 +3,31 @@ package ssm
 import (
 	"testing"
 
-	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
+	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
+	"gitlab.com/polarsquad/eks-auth-sync/test/stub"
+	"gitlab.com/polarsquad/eks-auth-sync/test/testdata"
 
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	testSSMPath      = "/path/to/mappings"
-	testMappingsYAML = `
-users:
-- userarn: arn:aws:iam::098765432198:user/john@example.org
-  username: john
-  groups:
-  - admin
-roles:
-- rolearn: arn:aws:iam::098765432198:role/eks-node
-  username: system:node:{{EC2PrivateDNSName}}
-  groups:
-  - system:bootstrappers
-  - system:nodes
-`
-)
-
 var (
-	testAWSConfig = &AWSConfig{
-		SSMAPI: &ssmStub{
-			contents: map[string]string{
-				testSSMPath: testMappingsYAML,
-			},
-		},
-	}
-	testMappings = &mapping.All{
-		Users: []*mapping.User{
-			&mapping.User{
-				UserARN:  "arn:aws:iam::098765432198:user/john@example.org",
-				Username: "john",
-				Groups:   []string{"admin"},
-			},
-		},
-		Roles: []*mapping.Role{
-			mapping.Node("arn:aws:iam::098765432198:role/eks-node"),
-		},
+	testAWSAPIs = &intaws.API{
+		SSM: stub.NewSSM(),
 	}
 )
 
 func TestSSMScan(t *testing.T) {
-	ms, err := Scan(&ScanConfig{testSSMPath}, testAWSConfig)
+	ms, err := Scan(&ScanConfig{testdata.MappingsSSMPath}, testAWSAPIs)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	assert.EqualValues(t, testMappings, ms)
+	assert.EqualValues(t, &testdata.AllMappings, ms)
 }
 
 func TestSSMScanFail(t *testing.T) {
-	_, err := Scan(&ScanConfig{testSSMPath + "/nope"}, testAWSConfig)
+	_, err := Scan(&ScanConfig{"/nope"}, testAWSAPIs)
 
 	if err == nil {
 		t.Fatal("expected an error from SSM scan")

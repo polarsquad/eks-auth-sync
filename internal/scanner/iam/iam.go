@@ -3,61 +3,53 @@ package iam
 import (
 	"fmt"
 
+	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
 	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
 
 	"github.com/aws/aws-sdk-go/aws"
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/service/iam"
-	"github.com/aws/aws-sdk-go/service/iam/iamiface"
 	"github.com/aws/aws-sdk-go/service/sts"
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 )
 
 type ScanConfig struct {
-	ClusterName      string
-	ClusterAccountID string
-	PathPrefix       string
-	DisableUserScan  bool
-	DisableRoleScan  bool
+	ClusterName      string `yaml:"clusterName"`
+	ClusterAccountID string `yaml:"clusterAccountID"`
+	PathPrefix       string `yaml:"pathPrefix"`
+	DisableUserScan  bool   `yaml:"disableUserScan"`
+	DisableRoleScan  bool   `yaml:"disableRoleScan"`
 }
 
-type AWSConfig struct {
-	STSAPI stsiface.STSAPI
-	IAMAPI iamiface.IAMAPI
-}
-
-func AWSConfigFromSession(s *session.Session, c *aws.Config) *AWSConfig {
-	return &AWSConfig{
-		STSAPI: sts.New(s, c),
-		IAMAPI: iam.New(s, c),
+func (c *ScanConfig) Validate() error {
+	if c.ClusterName == "" {
+		return fmt.Errorf("no cluster name specified")
 	}
+	if c.ClusterAccountID == "" {
+		return fmt.Errorf("no cluster account ID specified")
+	}
+	return nil
 }
 
 func (c *ScanConfig) TagPrefix() string {
-	return eksTagPrefix(c.ClusterAccountID, c.ClusterName)
+	return fmt.Sprintf("eks/%s/%s", c.ClusterAccountID, c.ClusterName)
 }
 
-func eksTagPrefix(clusterAccountID, clusterName string) string {
-	return fmt.Sprintf("eks/%s/%s", clusterAccountID, clusterName)
-}
-
-func Scan(c *ScanConfig, awsConfig *AWSConfig) (ms *mapping.All, err error) {
+func Scan(c *ScanConfig, awsAPIs *intaws.API) (ms *mapping.All, err error) {
 	ms = &mapping.All{}
 
-	accountID, err := getAccountID(awsConfig.STSAPI)
+	accountID, err := getAccountID(awsAPIs.STS)
 	if err != nil {
 		return
 	}
 
 	if !c.DisableUserScan {
-		ms.Users, err = scanIAMUsers(awsConfig.IAMAPI, accountID, c)
+		ms.Users, err = scanIAMUsers(awsAPIs.IAM, accountID, c)
 		if err != nil {
 			return
 		}
 	}
 
 	if !c.DisableRoleScan {
-		ms.Roles, err = scanIAMRoles(awsConfig.IAMAPI, accountID, c)
+		ms.Roles, err = scanIAMRoles(awsAPIs.IAM, accountID, c)
 		if err != nil {
 			return
 		}
