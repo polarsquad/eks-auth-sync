@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Builds eks-auth-sync app with all the right build flags.
+#
 set -eu
 
 export CGO_ENABLED=0

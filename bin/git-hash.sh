@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Reads the Git commit hash from the environment.
+#
 set -eu
 
 check_git_sha() {

@@ -1,2 +1,4 @@
+.gomodcache/
+dist/
 eks-auth-sync
 coverage.txt

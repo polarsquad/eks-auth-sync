@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Reads the eks-auth-sync version from the environment.
+#
 set -eu
 
 VERSION_MATCH_REGEX='^v[0-9]+\.[0-9]+\.[0-9]+$'

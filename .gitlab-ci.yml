@@ -11,6 +11,7 @@ workflow:
   rules:
   - if: $CI_MERGE_REQUEST_ID
   - if: $CI_COMMIT_BRANCH == "master"
+  - if: $CI_COMMIT_TAG =~ /^v[0-9]+\.[0-9]+\.[0-9]+$/
 
 .go-cache:
   variables:
@@ -40,10 +41,9 @@ test:
   script:
   - ./bin/test.sh
 
-docker-image-build:
+test-build:
   stage: test
-  image: docker:latest
-  services:
-  - docker:dind
+  extends: .go-cache
   script:
-  - ./bin/docker-build.sh "$CI_REGISTRY_IMAGE:$CI_COMMIT_REF_SLUG"
+  - ./bin/build.sh
+  - ./eks-auth-sync -version

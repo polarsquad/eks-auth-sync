@@ -1,4 +1,7 @@
 #!/bin/sh
+#
+# Run lint validations on the code using golangci-lint.
+#
 set -eu
 
 # Hack to get build to work when Docker is not available but Podman is.
