@@ -29,7 +29,7 @@ lint:
   extends: .go-cache
   image: golangci/golangci-lint:v1.27.0
   script:
-  - golangci-lint run -v
+  - golangci-lint run -v --timeout 4m --skip-dirs '(^|/).go($|/)'
 
 test:
   stage: test
