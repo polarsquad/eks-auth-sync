@@ -2,13 +2,16 @@ package k8s
 
 import (
 	"fmt"
-	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
+	"os"
+	"path/filepath"
+	"strings"
 
 	k8sv1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/rest"
+	"k8s.io/client-go/tools/clientcmd"
 )
 
 const (
@@ -27,12 +30,23 @@ func NewClientset(config *Config) (kubernetes.Interface, error) {
 	if config.InKubeCluster {
 		kubeConfig, err = rest.InClusterConfig()
 	} else {
-		kubeConfig, err = clientcmd.BuildConfigFromFlags("", config.KubeConfigPath)
+		kubeConfigPath := resolveKubeConfigPath(os.Getenv("HOME"), config.KubeConfigPath)
+		kubeConfig, err = clientcmd.BuildConfigFromFlags("", kubeConfigPath)
 	}
 	if err != nil {
 		return nil, err
 	}
 	return kubernetes.NewForConfig(kubeConfig)
+}
+
+func resolveKubeConfigPath(homeDir string, kubeConfigPath string) string {
+	if strings.TrimSpace(kubeConfigPath) == "" {
+		return filepath.Join(homeDir, ".kube/config")
+	}
+	if strings.HasPrefix(kubeConfigPath, "~/") {
+		return filepath.Join(homeDir, kubeConfigPath[2:])
+	}
+	return kubeConfigPath
 }
 
 func UpdateAWSAuthConfigMap(clientset kubernetes.Interface, configMap *k8sv1.ConfigMap) error {
