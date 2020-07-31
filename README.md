@@ -16,7 +16,7 @@ To help automate the ConfigMap updates, you can use eks-auth-sync to automatical
 
 Here's roughly what the tool does when you run it:
 
-1. Read a given configuration file for a list of data sources (called "sccanners").
+1. Read a given configuration file for a list of data sources (called "scanners").
 2. Read the data sources for all the available auth mappings, and join the results.
 3. Update the auth mappings in your EKS cluster.
 

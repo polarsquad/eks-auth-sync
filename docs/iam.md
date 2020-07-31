@@ -85,4 +85,10 @@ roles:
   - system:nodes
 ```
 
+To save those mappings to your EKS cluster, provide the configuration file to `eks-auth-sync`.
+
+```
+$ eks-auth-sync -config myconfig.yaml -commit
+```
+
 [eks-node-iam-role]: https://docs.aws.amazon.com/eks/latest/userguide/worker_node_IAM_role.html
