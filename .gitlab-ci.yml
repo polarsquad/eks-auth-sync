@@ -44,6 +44,8 @@ test:
   extends: .go-cache
   script:
   - ./bin/test.sh
+  - go tool cover -func=coverage.txt
+  coverage: '/total:\s+\(statements\)\s+(\d+.\d+\%)/'
 
 test-build:
   stage: test

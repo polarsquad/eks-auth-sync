@@ -5,6 +5,7 @@
 set -eu
 
 go test \
+    -v \
     -race \
     -coverpkg ./internal/... \
     -coverprofile=coverage.txt \
