@@ -20,11 +20,15 @@ func scanIAMUsers(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*m
 	// If the marker and truncation flag don't work for whatever reason,
 	// there's an upper bound for how many times the markers are followed.
 	for i := 0; i < 1000; i++ {
+		var input iam.ListUsersInput
 		var output *iam.ListUsersOutput
-		output, err = svc.ListUsers(&iam.ListUsersInput{
-			PathPrefix: aws.String(c.PathPrefix),
-			Marker:     marker,
-		})
+
+		if strings.TrimSpace(c.PathPrefix) != "" {
+			input.PathPrefix = aws.String(c.PathPrefix)
+		}
+		input.Marker = marker
+
+		output, err = svc.ListUsers(&input)
 		if err != nil {
 			return
 		}
