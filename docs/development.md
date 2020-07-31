@@ -21,7 +21,7 @@ You can contribute code (using merge requests) and tickets there.
 
 [Gitlab CI](https://gitlab.com/polarsquad/eks-auth-sync/-/pipelines) is used for building and publishing this project.
 All merge requests must pass the CI pipeline before they can be merged.
-The pipeline is configured in [`.gitlab-ci.yml`](.gitlab-ci.yml) file.
+The pipeline is configured in [`.gitlab-ci.yml`](../.gitlab-ci.yml) file.
 
 ## Helper scripts
 
