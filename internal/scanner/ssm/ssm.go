@@ -1,6 +1,7 @@
 package ssm
 
 import (
+	"encoding/base64"
 	"fmt"
 
 	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
@@ -23,6 +24,7 @@ func (s *ScanConfig) Validate() error {
 
 func Scan(c *ScanConfig, awsAPIs *intaws.API) (ms *mapping.All, err error) {
 	ms = &mapping.All{}
+
 	var output *ssm.GetParameterOutput
 	output, err = awsAPIs.SSM.GetParameter(&ssm.GetParameterInput{
 		Name:           aws.String(c.Path),
@@ -31,6 +33,13 @@ func Scan(c *ScanConfig, awsAPIs *intaws.API) (ms *mapping.All, err error) {
 	if err != nil {
 		return
 	}
-	err = ms.FromYAML([]byte(*output.Parameter.Value))
+
+	var bs []byte
+	bs, err = base64.StdEncoding.DecodeString(*output.Parameter.Value)
+	if err != nil {
+		return
+	}
+
+	err = ms.FromYAML(bs)
 	return
 }
