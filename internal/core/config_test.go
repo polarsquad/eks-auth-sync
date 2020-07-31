@@ -32,9 +32,9 @@ scanners:
   type: file
   file:
     path: /path/to/mappings.yaml
-- name: hardcoded
-  type: hardcoded
-  mappings:
+- name: static
+  type: static
+  static:
     users:
     - userarn: arn:aws:iam::098765432198:user/john
       username: john
@@ -79,9 +79,9 @@ var testConfig = Config{
 			File: file.ScanConfig{Path: "/path/to/mappings.yaml"},
 		},
 		{
-			Name: "hardcoded",
-			Type: "hardcoded",
-			Mappings: mapping.All{
+			Name: "static",
+			Type: "static",
+			Static: mapping.All{
 				Users: []*mapping.User{
 					{
 						UserARN:  "arn:aws:iam::098765432198:user/john",

@@ -13,13 +13,13 @@ import (
 )
 
 type Scanner struct {
-	Name     string          `yaml:"name"`
-	Type     string          `yaml:"type"`
-	Mappings mapping.All     `yaml:"mappings"`
-	File     file.ScanConfig `yaml:"file"`
-	IAM      iam.ScanConfig  `yaml:"iam"`
-	SSM      ssm.ScanConfig  `yaml:"ssm"`
-	AWS      aws.Config      `yaml:"aws"`
+	Name   string          `yaml:"name"`
+	Type   string          `yaml:"type"`
+	Static mapping.All     `yaml:"static"`
+	File   file.ScanConfig `yaml:"file"`
+	IAM    iam.ScanConfig  `yaml:"iam"`
+	SSM    ssm.ScanConfig  `yaml:"ssm"`
+	AWS    aws.Config      `yaml:"aws"`
 }
 
 type API struct {
@@ -33,7 +33,7 @@ func (s *Scanner) Validate() error {
 	case "file":
 		err = s.File.Validate()
 	case "static":
-		if s.Mappings.IsEmpty() {
+		if s.Static.IsEmpty() {
 			err = fmt.Errorf("no static mappings specified")
 		}
 	case "iam":
@@ -58,7 +58,7 @@ func (s *Scanner) Scan(api *API) (*mapping.All, error) {
 	case "file":
 		ms, err = file.Scan(&s.File, api.FS)
 	case "static":
-		ms = &s.Mappings
+		ms = &s.Static
 	case "iam":
 		ms, err = iam.Scan(&s.IAM, api.AWS)
 	case "ssm":
