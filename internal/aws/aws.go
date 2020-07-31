@@ -1,6 +1,8 @@
 package aws
 
 import (
+	"strings"
+
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/credentials/stscreds"
 	"github.com/aws/aws-sdk-go/aws/session"
@@ -35,13 +37,13 @@ func MergeConfigs(c1, c2 *Config) (c *Config) {
 		MaxRetries: c1.MaxRetries,
 	}
 
-	if c2.RoleARN != "" {
+	if strings.TrimSpace(c2.RoleARN) != "" {
 		c.RoleARN = c2.RoleARN
 	}
-	if c2.Endpoint != "" {
+	if strings.TrimSpace(c2.Endpoint) != "" {
 		c.Endpoint = c2.Endpoint
 	}
-	if c2.Region != "" {
+	if strings.TrimSpace(c2.Region) != "" {
 		c.Region = c2.Region
 	}
 	if c2.DisableSSL != nil {
@@ -69,7 +71,9 @@ func NewSession(config *Config) (*session.Session, error) {
 
 func NewAPI(sess *session.Session, config *Config) *API {
 	awsClientConfig := config.ToAWSClientConfig()
-	awsClientConfig.Credentials = stscreds.NewCredentials(sess, config.RoleARN)
+	if strings.TrimSpace(config.RoleARN) != "" {
+		awsClientConfig.Credentials = stscreds.NewCredentials(sess, config.RoleARN)
+	}
 
 	return &API{
 		IAM: iam.New(sess, awsClientConfig),
