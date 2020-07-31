@@ -77,7 +77,9 @@ release:
   variables:
     GIT_DEPTH: 0
     DOCKER_HOST: tcp://docker:2376
-    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_CERTDIR: /certs
+    DOCKER_CERT_PATH: /certs/client
+    DOCKER_TLS_VERIFY: "1"
   services:
   - docker:dind
   before_script:
