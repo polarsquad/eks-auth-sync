@@ -40,5 +40,3 @@ checksum:
   name_template: 'checksums.txt'
 snapshot:
   name_template: "{{ .Major }}.{{ .Minor }}.{{ .Patch }}-{{ .ShortCommit }}"
-changelog:
-  skip: true

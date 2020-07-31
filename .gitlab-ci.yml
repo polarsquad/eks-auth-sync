@@ -76,6 +76,8 @@ release:
     entrypoint: [""]
   variables:
     GIT_DEPTH: 0
+    DOCKER_HOST: tcp://docker:2376
+    DOCKER_TLS_CERTDIR: "/certs"
   services:
   - docker:dind
   before_script:
