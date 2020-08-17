@@ -67,8 +67,8 @@ var testConfig = Config{
 	},
 	AWS: intaws.Config{
 		RoleARN:    "arn:aws:iam::098765432198:role/eks-admin",
-		Endpoint:   "https://localhost:9876",
-		Region:     "eu-north-1",
+		Endpoint:   aws.String("https://localhost:9876"),
+		Region:     aws.String("eu-north-1"),
 		DisableSSL: aws.Bool(true),
 		MaxRetries: aws.Int(6),
 	},

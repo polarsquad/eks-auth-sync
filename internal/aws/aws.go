@@ -21,11 +21,11 @@ type API struct {
 }
 
 type Config struct {
-	RoleARN    string `yaml:"roleARN"`
-	Endpoint   string `yaml:"endpoint"`
-	Region     string `yaml:"region"`
-	DisableSSL *bool  `yaml:"disableSSL"`
-	MaxRetries *int   `yaml:"maxRetries"`
+	RoleARN    string  `yaml:"roleARN"`
+	Endpoint   *string `yaml:"endpoint"`
+	Region     *string `yaml:"region"`
+	DisableSSL *bool   `yaml:"disableSSL"`
+	MaxRetries *int    `yaml:"maxRetries"`
 }
 
 func MergeConfigs(c1, c2 *Config) (c *Config) {
@@ -40,10 +40,10 @@ func MergeConfigs(c1, c2 *Config) (c *Config) {
 	if strings.TrimSpace(c2.RoleARN) != "" {
 		c.RoleARN = c2.RoleARN
 	}
-	if strings.TrimSpace(c2.Endpoint) != "" {
+	if c2.Endpoint != nil && strings.TrimSpace(*c2.Endpoint) != "" {
 		c.Endpoint = c2.Endpoint
 	}
-	if strings.TrimSpace(c2.Region) != "" {
+	if c2.Region != nil && strings.TrimSpace(*c2.Region) != "" {
 		c.Region = c2.Region
 	}
 	if c2.DisableSSL != nil {
@@ -58,8 +58,8 @@ func MergeConfigs(c1, c2 *Config) (c *Config) {
 
 func (c *Config) ToAWSClientConfig() *aws.Config {
 	return &aws.Config{
-		Endpoint:   aws.String(c.Endpoint),
-		Region:     aws.String(c.Region),
+		Endpoint:   c.Endpoint,
+		Region:     c.Region,
 		DisableSSL: c.DisableSSL,
 		MaxRetries: c.MaxRetries,
 	}
