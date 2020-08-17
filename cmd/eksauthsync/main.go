@@ -9,7 +9,7 @@ import (
 
 func main() {
 	if err := mainWithErr(); err != nil {
-		log.Panic(err)
+		log.Fatal(err)
 	}
 }
 
