@@ -20,6 +20,11 @@ Here's roughly what the tool does when you run it:
 2. Read the data sources for all the available auth mappings, and join the results.
 3. Update the auth mappings in your EKS cluster.
 
+## Download
+
+You can download the latest binary release from the [Gitlab releases page](https://gitlab.com/polarsquad/eks-auth-sync/-/releases).
+Docker images for the tool are available in the [Gitlab container registry](https://gitlab.com/polarsquad/eks-auth-sync/container_registry).
+
 ## Usage
 
 The `eks-auth-sync` tool accepts the following parameters:
