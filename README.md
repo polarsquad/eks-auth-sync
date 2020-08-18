@@ -42,6 +42,8 @@ The `eks-auth-sync` tool accepts the following parameters:
   * [Files on disk](docs/file.md)
   * [IAM](docs/iam.md)
   * [SSM](docs/ssm.md)
+* Deployment
+  * [CronJob](docs/cronjob.md)
 * [Development](docs/development.md)
 
 ## License

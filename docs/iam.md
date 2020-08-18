@@ -35,7 +35,7 @@ scanners:
 - type: iam
   iam:
     clusterName: mycluster
-    clusterAccountID: 123456789012
+    clusterAccountID: "123456789012"
     pathPrefix: /eks/
 ```
 
