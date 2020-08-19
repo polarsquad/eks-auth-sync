@@ -2,6 +2,8 @@
 
 A tool to help manage EKS cluster authentication configuration.
 
+![Architecture diagram](diagram.png)
+
 ## What's the problem this tool solves?
 
 Authentication in EKS is configured using [a single ConfigMap in the Kubernetes cluster][aws-auth] (`aws-auth`) that maps AWS IAM users and roles to users in Kubernetes.
