@@ -1,11 +1,13 @@
 package core
 
 import (
+	"context"
 	"fmt"
-	"gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo"
-	"gopkg.in/yaml.v2"
 	"io"
 	"os"
+
+	"gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo"
+	"gopkg.in/yaml.v2"
 
 	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
 	"gitlab.com/polarsquad/eks-auth-sync/internal/k8s"
@@ -24,6 +26,7 @@ type Core struct {
 	AWSSession func(*intaws.Config) (*session.Session, error)
 	AWSAPI     func(*session.Session, *intaws.Config) *intaws.API
 	KubeClient func(*k8s.Config) (kubernetes.Interface, error)
+	Context    context.Context
 }
 
 func NewCore() *Core {
@@ -34,6 +37,7 @@ func NewCore() *Core {
 		AWSSession: intaws.NewSession,
 		AWSAPI:     intaws.NewAPI,
 		KubeClient: k8s.NewClientset,
+		Context:    context.Background(),
 	}
 }
 
@@ -109,7 +113,7 @@ func (c *Core) runFromConfig(config *Config, commit bool) error {
 		if err != nil {
 			return err
 		}
-		return k8s.UpdateAWSAuthConfigMap(clientset, mappingsConfigMap)
+		return k8s.UpdateAWSAuthConfigMap(c.Context, clientset, mappingsConfigMap)
 	} else {
 		bs, err := yaml.Marshal(mappings)
 		if err != nil {

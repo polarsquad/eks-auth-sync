@@ -2,6 +2,10 @@ package core
 
 import (
 	"bytes"
+	"context"
+	"io"
+	"testing"
+
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/spf13/afero"
 	"github.com/stretchr/testify/assert"
@@ -11,12 +15,10 @@ import (
 	"gitlab.com/polarsquad/eks-auth-sync/test/stub"
 	"gitlab.com/polarsquad/eks-auth-sync/test/testdata"
 	"gopkg.in/yaml.v2"
-	"io"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/kubernetes/fake"
-	"testing"
 )
 
 const (
@@ -253,7 +255,7 @@ func getMappingsFromKube(kubeClient kubernetes.Interface) (*mapping.All, error) 
 	var users []*mapping.User
 	var roles []*mapping.Role
 
-	cm, err := kubeClient.CoreV1().ConfigMaps("kube-system").Get("aws-auth", metav1.GetOptions{})
+	cm, err := kubeClient.CoreV1().ConfigMaps("kube-system").Get(context.Background(), "aws-auth", metav1.GetOptions{})
 	if errors.IsNotFound(err) {
 		return nil, nil
 	}

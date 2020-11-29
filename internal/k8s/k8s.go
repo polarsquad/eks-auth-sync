@@ -1,6 +1,7 @@
 package k8s
 
 import (
+	"context"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -49,7 +50,7 @@ func resolveKubeConfigPath(homeDir string, kubeConfigPath string) string {
 	return kubeConfigPath
 }
 
-func UpdateAWSAuthConfigMap(clientset kubernetes.Interface, configMap *k8sv1.ConfigMap) error {
+func UpdateAWSAuthConfigMap(ctx context.Context, clientset kubernetes.Interface, configMap *k8sv1.ConfigMap) error {
 	// Make sure we don't accidentally attempt to modify something that's not meant to be updated.
 	if configMap.Name != configMapName {
 		return fmt.Errorf("attempted to update a ConfigMap that's not %s: %s", configMapName, configMap.Name)
@@ -59,12 +60,12 @@ func UpdateAWSAuthConfigMap(clientset kubernetes.Interface, configMap *k8sv1.Con
 	}
 
 	cmAPI := clientset.CoreV1().ConfigMaps(namespace)
-	_, err := cmAPI.Get(configMapName, metav1.GetOptions{})
+	_, err := cmAPI.Get(ctx, configMapName, metav1.GetOptions{})
 	if err == nil {
-		_, err := cmAPI.Update(configMap)
+		_, err := cmAPI.Update(ctx, configMap, metav1.UpdateOptions{})
 		return err
 	} else if errors.IsNotFound(err) {
-		_, err := cmAPI.Create(configMap)
+		_, err := cmAPI.Create(ctx, configMap, metav1.CreateOptions{})
 		return err
 	}
 	return err
