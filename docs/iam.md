@@ -13,7 +13,10 @@ Here's all the tags that the tool scans for:
 * `eks/{account id}/{cluster name}/username`:
   Username to map the user/role to in Kubernetes
 * `eks/{account id}/{cluster name}/groups`:
-  A comma-separated list of Kubernetes groups the user/role is assigned to
+  A list of Kubernetes groups the user/role is assigned to.
+  By default, each entry is separated with the string `::`.
+  This means `qa::developers` is parsed to list containing groups `qa` and `developers`.
+  The separator is customisable.
 * `eks/{account id}/{cluster name}/type`:
   When set to `node`, the role is interpreted as an EKS worker node role.
   When set to `user`, the role is interpreted as a normal Kubernetes user.
@@ -37,14 +40,16 @@ scanners:
     clusterName: mycluster
     clusterAccountID: "123456789012"
     pathPrefix: /eks/
+    groupSeparator: "::"
 ```
 
 This will make `eks-auth-sync` scan IAM user/role tags for entries that contain the given cluster name and account ID.
 Make sure to replace those details with the details of your EKS cluster.
 Using the path prefix, we can limit the scan to users/roles that start with path `/eks/`.
+By specifying the group separator, we can select the string that is used for splitting the groups string to a list of groups.
 
 Let's create some users and roles to test the configuration with.
-First, we'll create a normal user `johannes` that's assigned to a Kubernetes group called `admin`.
+First, we'll create a normal user `johannes` that's assigned to Kubernetes groups called `qa` and `developers`.
 
 ```
 $ aws iam create-user \
@@ -52,7 +57,7 @@ $ aws iam create-user \
     --path /eks/ \
     --tags \
         Key=eks/123456789012/mycluster/username,Value=johannes \
-        Key=eks/123456789012/mycluster/groups,Value=admin
+        Key=eks/123456789012/mycluster/groups,Value=qa::developers
 ```
 
 Next, we'll create a EKS worker node role:
@@ -76,7 +81,8 @@ users:
 - userarn: arn:aws:iam::123456789012:user/johannes
   username: johannes
   groups:
-  - admin
+  - qa
+  - developers
 roles:
 - rolearn: arn:aws:iam::123456789012:role/eks-node
   username: system:node:{{EC2PrivateDNSName}}

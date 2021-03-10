@@ -100,6 +100,7 @@ scanners:
     clusterName: mycluster
     clusterAccountID: 123456789012
     pathPrefix: /eks/
+    groupSeparator: .
 `
 
 	if err := afero.WriteFile(core.AppFS, configPath, []byte(configFile), 0666); err != nil {
@@ -129,6 +130,7 @@ scanners:
     clusterName: mycluster
     clusterAccountID: 123456789012
     pathPrefix: /eks/
+    groupSeparator: .
 - type: ssm
   ssm:
     path: /core/test/mappings

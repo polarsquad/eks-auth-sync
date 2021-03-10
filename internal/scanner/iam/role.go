@@ -15,6 +15,7 @@ import (
 func scanIAMRoles(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*mapping.Role, err error) {
 	ms = make([]*mapping.Role, 0, 100)
 	tagPrefix := c.TagPrefix()
+	groupSeparator := c.GroupSeparator()
 	var marker *string
 
 	// This is perhaps unnecessarily defensive but added just in case.
@@ -40,7 +41,7 @@ func scanIAMRoles(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*m
 			if err != nil {
 				return
 			}
-			m := createRoleMappingFromTags(accountID, *role.RoleName, tags, tagPrefix)
+			m := createRoleMappingFromTags(accountID, *role.RoleName, tags, tagPrefix, groupSeparator)
 			if m != nil {
 				ms = append(ms, m)
 			}
@@ -86,7 +87,13 @@ func getTagsForRole(svc iamiface.IAMAPI, rolename *string, tagPrefix string) (ta
 	return tags, nil
 }
 
-func createRoleMappingFromTags(accountID string, rolename string, tags map[string]string, tagPrefix string) *mapping.Role {
+func createRoleMappingFromTags(
+	accountID string,
+	rolename string,
+	tags map[string]string,
+	tagPrefix string,
+	groupSeparator string,
+) *mapping.Role {
 	roleARN := fmt.Sprintf("arn:aws:iam::%s:role/%s", accountID, rolename)
 
 	roleType := getTag(tags, tagPrefix, tagKeyType)
@@ -105,6 +112,6 @@ func createRoleMappingFromTags(accountID string, rolename string, tags map[strin
 	return &mapping.Role{
 		RoleARN:  roleARN,
 		Username: k8sUsername,
-		Groups:   getK8sGroups(tags, tagPrefix),
+		Groups:   getK8sGroups(tags, tagPrefix, groupSeparator),
 	}
 }

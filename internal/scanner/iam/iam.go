@@ -11,12 +11,18 @@ import (
 	"github.com/aws/aws-sdk-go/service/sts/stsiface"
 )
 
+// DefaultGroupSeparator is the string that is used for distinguishing
+// where one group name ends and where the next one starts when parsing
+// the Kubernetes groups from the IAM tags.
+const DefaultGroupSeparator = "::"
+
 type ScanConfig struct {
-	ClusterName      string `yaml:"clusterName"`
-	ClusterAccountID string `yaml:"clusterAccountID"`
-	PathPrefix       string `yaml:"pathPrefix"`
-	DisableUserScan  bool   `yaml:"disableUserScan"`
-	DisableRoleScan  bool   `yaml:"disableRoleScan"`
+	ClusterName       string `yaml:"clusterName"`
+	ClusterAccountID  string `yaml:"clusterAccountID"`
+	PathPrefix        string `yaml:"pathPrefix"`
+	GroupSeparatorStr string `yaml:"groupSeparator"`
+	DisableUserScan   bool   `yaml:"disableUserScan"`
+	DisableRoleScan   bool   `yaml:"disableRoleScan"`
 }
 
 func (c *ScanConfig) Validate() error {
@@ -31,6 +37,13 @@ func (c *ScanConfig) Validate() error {
 
 func (c *ScanConfig) TagPrefix() string {
 	return fmt.Sprintf("eks/%s/%s", c.ClusterAccountID, c.ClusterName)
+}
+
+func (c *ScanConfig) GroupSeparator() string {
+	if c.GroupSeparatorStr == "" {
+		return DefaultGroupSeparator
+	}
+	return c.GroupSeparatorStr
 }
 
 func Scan(c *ScanConfig, awsAPIs *intaws.API) (ms *mapping.All, err error) {

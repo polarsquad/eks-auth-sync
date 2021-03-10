@@ -19,10 +19,11 @@ var (
 
 func TestUserScanning(t *testing.T) {
 	scanConfig := &ScanConfig{
-		ClusterName:      testdata.ClusterName,
-		ClusterAccountID: testdata.AccountID,
-		PathPrefix:       testdata.PathPrefix,
-		DisableRoleScan:  true,
+		ClusterName:       testdata.ClusterName,
+		ClusterAccountID:  testdata.AccountID,
+		PathPrefix:        testdata.PathPrefix,
+		GroupSeparatorStr: testdata.GroupSeparator,
+		DisableRoleScan:   true,
 	}
 
 	ms, err := Scan(scanConfig, testAWSAPIs)
@@ -36,10 +37,11 @@ func TestUserScanning(t *testing.T) {
 
 func TestRoleScanning(t *testing.T) {
 	scanConfig := &ScanConfig{
-		ClusterName:      testdata.ClusterName,
-		ClusterAccountID: testdata.AccountID,
-		PathPrefix:       testdata.PathPrefix,
-		DisableUserScan:  true,
+		ClusterName:       testdata.ClusterName,
+		ClusterAccountID:  testdata.AccountID,
+		PathPrefix:        testdata.PathPrefix,
+		GroupSeparatorStr: testdata.GroupSeparator,
+		DisableUserScan:   true,
 	}
 
 	ms, err := Scan(scanConfig, testAWSAPIs)
@@ -53,9 +55,10 @@ func TestRoleScanning(t *testing.T) {
 
 func TestRoleAndUserScanning(t *testing.T) {
 	scanConfig := &ScanConfig{
-		ClusterName:      testdata.ClusterName,
-		ClusterAccountID: testdata.AccountID,
-		PathPrefix:       testdata.PathPrefix,
+		ClusterName:       testdata.ClusterName,
+		ClusterAccountID:  testdata.AccountID,
+		PathPrefix:        testdata.PathPrefix,
+		GroupSeparatorStr: testdata.GroupSeparator,
 	}
 
 	ms, err := Scan(scanConfig, testAWSAPIs)
@@ -69,9 +72,10 @@ func TestRoleAndUserScanning(t *testing.T) {
 
 func TestWrongPathScanning(t *testing.T) {
 	scanConfig := &ScanConfig{
-		ClusterName:      testdata.ClusterName,
-		ClusterAccountID: testdata.AccountID,
-		PathPrefix:       testdata.PathPrefix + "wrong",
+		ClusterName:       testdata.ClusterName,
+		ClusterAccountID:  testdata.AccountID,
+		PathPrefix:        testdata.PathPrefix + "wrong",
+		GroupSeparatorStr: testdata.GroupSeparator,
 	}
 
 	ms, err := Scan(scanConfig, testAWSAPIs)

@@ -23,6 +23,6 @@ func getK8sUsername(tags map[string]string, tagPrefix string) string {
 	return getTag(tags, tagPrefix, tagKeyUsername)
 }
 
-func getK8sGroups(tags map[string]string, tagPrefix string) []string {
-	return strings.Split(getTag(tags, tagPrefix, tagKeyGroups), ",")
+func getK8sGroups(tags map[string]string, tagPrefix string, tagDelimiter string) []string {
+	return strings.Split(getTag(tags, tagPrefix, tagKeyGroups), tagDelimiter)
 }

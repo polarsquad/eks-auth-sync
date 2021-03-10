@@ -2,6 +2,7 @@ package testdata
 
 import (
 	"fmt"
+	"strings"
 
 	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
 
@@ -16,6 +17,7 @@ const (
 	AccountID       = "123456789012"
 	AccountID2      = "098765432198"
 	MappingsSSMPath = "/path/to/mappings"
+	GroupSeparator  = "."
 )
 
 var (
@@ -58,7 +60,7 @@ var Users = []*iam.User{
 			},
 			{
 				Key:   aws.String(ClusterTagKeyGroups),
-				Value: aws.String("team-x,team-y"),
+				Value: aws.String(strings.Join([]string{"team-x", "team-y"}, GroupSeparator)),
 			},
 		},
 	},
@@ -179,7 +181,7 @@ var Roles = []*iam.Role{
 			},
 			{
 				Key:   aws.String(ClusterTagKeyGroups),
-				Value: aws.String("deployer,team-x"),
+				Value: aws.String(strings.Join([]string{"deployer", "team-x"}, GroupSeparator)),
 			},
 		},
 	},
@@ -204,7 +206,7 @@ var Roles = []*iam.Role{
 			},
 			{
 				Key:   aws.String(Cluster2TagKeyGroups),
-				Value: aws.String("deployer,team-x"),
+				Value: aws.String(strings.Join([]string{"deployer", "team-x"}, GroupSeparator)),
 			},
 		},
 	},

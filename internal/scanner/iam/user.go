@@ -14,6 +14,7 @@ import (
 func scanIAMUsers(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*mapping.User, err error) {
 	ms = make([]*mapping.User, 0, 100)
 	tagPrefix := c.TagPrefix()
+	groupSeparator := c.GroupSeparator()
 	var marker *string
 
 	// This is perhaps unnecessarily defensive but added just in case.
@@ -39,7 +40,7 @@ func scanIAMUsers(svc iamiface.IAMAPI, accountID string, c *ScanConfig) (ms []*m
 			if err != nil {
 				return
 			}
-			m := createUserMappingFromTags(accountID, *user.UserName, tags, tagPrefix)
+			m := createUserMappingFromTags(accountID, *user.UserName, tags, tagPrefix, groupSeparator)
 			if m != nil {
 				ms = append(ms, m)
 			}
@@ -85,7 +86,13 @@ func getTagsForUser(svc iamiface.IAMAPI, username *string, tagPrefix string) (ta
 	return tags, nil
 }
 
-func createUserMappingFromTags(accountID string, username string, tags map[string]string, tagPrefix string) *mapping.User {
+func createUserMappingFromTags(
+	accountID string,
+	username string,
+	tags map[string]string,
+	tagPrefix string,
+	groupSeparator string,
+) *mapping.User {
 	k8sUsername := getK8sUsername(tags, tagPrefix)
 	if k8sUsername == "" {
 		return nil
@@ -93,6 +100,6 @@ func createUserMappingFromTags(accountID string, username string, tags map[strin
 	return &mapping.User{
 		UserARN:  fmt.Sprintf("arn:aws:iam::%s:user/%s", accountID, username),
 		Username: k8sUsername,
-		Groups:   getK8sGroups(tags, tagPrefix),
+		Groups:   getK8sGroups(tags, tagPrefix, groupSeparator),
 	}
 }
