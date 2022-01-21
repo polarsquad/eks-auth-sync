@@ -38,6 +38,7 @@ var testMappings = All{
 			Username: "deployer",
 			Groups:   []string{"team-x", "deployer"},
 		},
+		FargateNode(roleARN(testAccountID1, "eks-fargate-node")),
 	},
 }
 
@@ -67,6 +68,12 @@ var testRolesYAML = strings.TrimSpace(`
   groups:
   - team-x
   - deployer
+- rolearn: arn:aws:iam::098765432198:role/eks-fargate-node
+  username: system:node:{{SessionName}}
+  groups:
+  - system:bootstrappers
+  - system:nodes
+  - system:node-proxier
 `)
 
 var testMappingsYAML = []byte(fmt.Sprintf(
