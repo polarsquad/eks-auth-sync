@@ -4,7 +4,7 @@ include:
 - template: Security/SAST.gitlab-ci.yml
 - template: Security/Secret-Detection.gitlab-ci.yml
 
-image: golang:1.14
+image: golang:1.17
 
 stages:
 - dependencies
