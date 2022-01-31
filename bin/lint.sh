@@ -15,5 +15,5 @@ fi
     --rm \
     -v "$(pwd):/app:z" \
     -w /app \
-    golangci/golangci-lint:v1.27.0 \
+    golangci/golangci-lint:v1.44.0 \
     golangci-lint run -v --timeout 2m --skip-dirs '(^|/).go($|/)'
