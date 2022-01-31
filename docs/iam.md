@@ -18,8 +18,9 @@ Here's all the tags that the tool scans for:
   This means `qa::developers` is parsed to list containing groups `qa` and `developers`.
   The separator is customisable.
 * `eks/{account id}/{cluster name}/type`:
-  When set to `node`, the role is interpreted as an EKS worker node role.
-  When set to `user`, the role is interpreted as a normal Kubernetes user.
+  * When set to `node`, the role is interpreted as an EKS worker node role.
+  * When set to `fargateNode`, the role is interpreted as an EKS Fargate worker node role.
+  * When set to `user`, the role is interpreted as a normal Kubernetes user.
   Only applicable for roles.
 
 Where:

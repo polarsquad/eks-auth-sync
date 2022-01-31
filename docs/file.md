@@ -36,6 +36,12 @@ roles:
   groups:
   - system:bootstrappers
   - system:nodes
+- rolearn: arn:aws:iam::098765432198:role/eks-fargate-node
+  username: system:node:{{SessionName}}
+  groups:
+  - system:bootstrappers
+  - system:nodes
+  - system:node-proxier
 ```
 
 To save those mappings to your EKS cluster, provide the configuration file to `eks-auth-sync`.
