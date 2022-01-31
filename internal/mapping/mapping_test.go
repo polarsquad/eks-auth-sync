@@ -33,12 +33,12 @@ var testMappings = All{
 	},
 	Roles: []*Role{
 		Node(roleARN(testAccountID1, "eks-node")),
+		FargateNode(roleARN(testAccountID1, "eks-fargate-node")),
 		{
 			RoleARN:  roleARN(testAccountID2, "deployer"),
 			Username: "deployer",
 			Groups:   []string{"team-x", "deployer"},
 		},
-		FargateNode(roleARN(testAccountID1, "eks-fargate-node")),
 	},
 }
 
@@ -46,34 +46,34 @@ var testUsersYAML = strings.TrimSpace(`
 - userarn: arn:aws:iam::098765432198:user/john@example.org
   username: john
   groups:
-  - admin
+    - admin
 - userarn: arn:aws:iam::123456789012:user/jill@example.org
   username: jill
   groups:
-  - team-x
+    - team-x
 - userarn: arn:aws:iam::123456789012:user/jack@example.org
   username: jack
   groups:
-  - team-x
+    - team-x
 `)
 
 var testRolesYAML = strings.TrimSpace(`
 - rolearn: arn:aws:iam::098765432198:role/eks-node
   username: system:node:{{EC2PrivateDNSName}}
   groups:
-  - system:bootstrappers
-  - system:nodes
-- rolearn: arn:aws:iam::123456789012:role/deployer
-  username: deployer
-  groups:
-  - team-x
-  - deployer
+    - system:bootstrappers
+    - system:nodes
 - rolearn: arn:aws:iam::098765432198:role/eks-fargate-node
   username: system:node:{{SessionName}}
   groups:
-  - system:bootstrappers
-  - system:nodes
-  - system:node-proxier
+    - system:bootstrappers
+    - system:nodes
+    - system:node-proxier
+- rolearn: arn:aws:iam::123456789012:role/deployer
+  username: deployer
+  groups:
+    - team-x
+    - deployer
 `)
 
 var testMappingsYAML = []byte(fmt.Sprintf(

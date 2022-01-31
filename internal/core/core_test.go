@@ -14,7 +14,7 @@ import (
 	"gitlab.com/polarsquad/eks-auth-sync/internal/mapping"
 	"gitlab.com/polarsquad/eks-auth-sync/test/stub"
 	"gitlab.com/polarsquad/eks-auth-sync/test/testdata"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"

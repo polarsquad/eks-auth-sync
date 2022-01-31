@@ -7,7 +7,7 @@ Here's what you need to know.
 
 These are the tools used in this project:
 
-* [Go 1.14](https://golang.org/) as the platform
+* [Go 1.17](https://golang.org/) as the platform
 * [Docker](https://www.docker.com/) (or [Podman](https://podman.io/) if you prefer it) for packaging the tool and running various tasks
 * [golangci-lint](https://golangci-lint.run/) for finding smelly code
 * [GoReleaser](https://goreleaser.com/) for releasing software

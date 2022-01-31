@@ -7,7 +7,7 @@ import (
 	"os"
 
 	"gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo"
-	"gopkg.in/yaml.v2"
+	"gopkg.in/yaml.v3"
 
 	intaws "gitlab.com/polarsquad/eks-auth-sync/internal/aws"
 	"gitlab.com/polarsquad/eks-auth-sync/internal/k8s"

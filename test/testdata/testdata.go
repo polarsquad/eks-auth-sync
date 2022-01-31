@@ -144,6 +144,23 @@ var Roles = []*iam.Role{
 		},
 	},
 	{
+		RoleName: aws.String("eks-fargate-node"),
+		Tags: []*iam.Tag{
+			{
+				Key: aws.String(ClusterTagKeyType),
+				Value: aws.String("fargateNode"),
+			},
+			{
+				Key: aws.String("purpose"),
+				Value: aws.String("EKS Fargate node role"),
+			},
+			{
+				Key: aws.String("owner"),
+				Value: aws.String("admins"),
+			},
+		},
+	},
+	{
 		RoleName: aws.String("invalid-role"),
 		Tags: []*iam.Tag{
 			{
@@ -232,6 +249,7 @@ var UserMappings = []*mapping.User{
 
 var RoleMappings = []*mapping.Role{
 	mapping.Node(roleARN(AccountID2, "eks-node")),
+	mapping.FargateNode(roleARN(AccountID2, "eks-fargate-node")),
 	{
 		RoleARN:  roleARN(AccountID2, "deployer"),
 		Username: "deployer",
@@ -246,30 +264,36 @@ var AllMappings = mapping.All{
 
 var MappingsYAML = `
 users:
-- userarn: arn:aws:iam::098765432198:user/jill@example.org
-  username: jill
-  groups:
-  - admin
-- userarn: arn:aws:iam::098765432198:user/john@example.org
-  username: john
-  groups:
-  - team-x
-  - team-y
-- userarn: arn:aws:iam::098765432198:user/jack@example.org
-  username: jack
-  groups:
-  - team-x
+  - userarn: arn:aws:iam::098765432198:user/jill@example.org
+    username: jill
+    groups:
+      - admin
+  - userarn: arn:aws:iam::098765432198:user/john@example.org
+    username: john
+    groups:
+      - team-x
+      - team-y
+  - userarn: arn:aws:iam::098765432198:user/jack@example.org
+    username: jack
+    groups:
+      - team-x
 roles:
-- rolearn: arn:aws:iam::098765432198:role/eks-node
-  username: system:node:{{EC2PrivateDNSName}}
-  groups:
-  - system:bootstrappers
-  - system:nodes
-- rolearn: arn:aws:iam::098765432198:role/deployer
-  username: deployer
-  groups:
-  - deployer
-  - team-x
+  - rolearn: arn:aws:iam::098765432198:role/eks-node
+    username: system:node:{{EC2PrivateDNSName}}
+    groups:
+      - system:bootstrappers
+      - system:nodes
+  - rolearn: arn:aws:iam::098765432198:role/eks-fargate-node
+    username: system:node:{{SessionName}}
+    groups:
+      - system:bootstrappers
+      - system:nodes
+      - system:node-proxier
+  - rolearn: arn:aws:iam::098765432198:role/deployer
+    username: deployer
+    groups:
+      - deployer
+      - team-x
 `
 
 var SSMContents = map[string]string{
