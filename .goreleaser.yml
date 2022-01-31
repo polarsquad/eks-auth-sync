@@ -1,8 +1,13 @@
+project_name: eks-auth-sync
+
 before:
   hooks:
     - go mod download
+    - go mod tidy
+
 builds:
-- main: ./cmd/eksauthsync
+- id: eks-auth-sync
+  main: ./cmd/eksauthsync
   env:
   - CGO_ENABLED=0
   goos:
@@ -14,29 +19,42 @@ builds:
   - arm64
   ldflags:
   - -s -w
-  - -X gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo.Version={{ .Version }}
-  - -X gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo.GitHash={{ .Commit }}
+  - -X gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo.Version={{.Version}}
+  - -X gitlab.com/polarsquad/eks-auth-sync/internal/buildinfo.GitHash={{.Commit}}
+
 dockers:
 - goos: linux
   goarch: amd64
-  binaries:
+  ids:
   - eks-auth-sync
   image_templates:
-  - registry.gitlab.com/polarsquad/{{ .ProjectName }}:{{ .Version }}
-  - registry.gitlab.com/polarsquad/{{ .ProjectName }}:latest
+  - registry.gitlab.com/polarsquad/{{.ProjectName}}:{{.Version}}
+  - registry.gitlab.com/polarsquad/{{.ProjectName}}:latest
+  build_flag_templates:
+  - "--label=org.opencontainers.image.created={{.Date}}"
+  - "--label=org.opencontainers.image.title={{.ProjectName}}"
+  - "--label=org.opencontainers.image.revision={{.FullCommit}}"
+  - "--label=org.opencontainers.image.version={{.Version}}"
+
 archives:
-- replacements:
+- id: eks-auth-sync
+  replacements:
     darwin: Darwin
     linux: Linux
     windows: Windows
     386: i386
     amd64: x86_64
+
 release:
+  ids:
+  - eks-auth-sync
   gitlab:
     owner: polarsquad
     name: eks-auth-sync
   name_template: "{{.ProjectName}}-v{{.Version}}"
+
 checksum:
   name_template: 'checksums.txt'
+
 snapshot:
-  name_template: "{{ .Major }}.{{ .Minor }}.{{ .Patch }}-{{ .ShortCommit }}"
+  name_template: "{{.Major}}.{{.Minor}}.{{.Patch}}-{{.ShortCommit}}"
