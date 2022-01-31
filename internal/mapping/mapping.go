@@ -7,6 +7,7 @@ import (
 
 const (
 	nodeUsername = "system:node:{{EC2PrivateDNSName}}"
+	fargateNodeUsername = "system:node:{{SessionName}}"
 )
 
 var (
@@ -14,6 +15,7 @@ var (
 		"system:bootstrappers",
 		"system:nodes",
 	}
+	fargateNodeGroups = append(nodeGroups, "system:node-proxier")
 )
 
 type Role struct {
@@ -33,6 +35,14 @@ func Node(roleARN string) *Role {
 		RoleARN:  roleARN,
 		Username: nodeUsername,
 		Groups:   nodeGroups,
+	}
+}
+
+func FargateNode(roleARN string) *Role {
+	return &Role{
+		RoleARN:  roleARN,
+		Username: fargateNodeUsername,
+		Groups:   fargateNodeGroups,
 	}
 }
 

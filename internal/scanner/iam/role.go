@@ -100,6 +100,9 @@ func createRoleMappingFromTags(
 	if roleType == "node" {
 		return mapping.Node(roleARN)
 	}
+	if roleType == "fargateNode" {
+		return mapping.FargateNode(roleARN)
+	}
 	if roleType != "" && roleType != "user" {
 		log.Printf("unknown role type [%s] found for role %s", roleType, roleARN)
 		return nil
